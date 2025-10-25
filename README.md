@@ -46,9 +46,15 @@ FLASK_ENV=development
 
 ```bash
 python -m venv .venv
+Linux:
 source .venv/bin/activate
+Windows:
+.\venv\Scripts\Activate.ps1
+
 pip install -r backend/requirements.txt
 flask --app backend.app:app run
+or 
+python -m backend.app
 ```
 
 The server starts on [http://localhost:5000](http://localhost:5000) and exposes the following endpoints:

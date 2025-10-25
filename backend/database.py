@@ -3,10 +3,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 
 
-DATABASE_URL = os.environ.get('DATABASE_URL') or 'postgresql+psycopg2://postgres:postgres@localhost:5432/cafe_fausse'
+DATABASE_URL = os.environ.get('DATABASE_URL') or 'postgresql+psycopg2://postgres:moshax@localhost:5432/cafe_fausse'
 if DATABASE_URL.startswith('postgres://'):
     DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql+psycopg2://', 1)
-
+print(DATABASE_URL)
 connect_args: dict[str, object] = {}
 if DATABASE_URL.startswith('sqlite'):
     connect_args['check_same_thread'] = False

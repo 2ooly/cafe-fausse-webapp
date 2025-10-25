@@ -1,5 +1,6 @@
 from datetime import datetime
 import random
+from typing import Optional
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sqlalchemy import select, func
@@ -18,7 +19,7 @@ def create_app() -> Flask:
     init_db()
 
     @app.teardown_appcontext
-    def remove_session(exception: Exception | None = None) -> None:  # pragma: no cover - cleanup
+    def remove_session(exception: Optional[Exception] = None) -> None:  # pragma: no cover - cleanup
         SessionLocal.remove()
 
     @app.get('/api/health')
