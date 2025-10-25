@@ -1,4 +1,4 @@
-# Café Fausse Web Application
+# Café Fausse Web Application by Ahmed Atrees
 
 This repository implements the Café Fausse web experience defined in the software requirements specification. It contains a React single-page application for the guest-facing website and a Flask API that powers reservations and newsletter sign ups.
 
@@ -8,8 +8,7 @@ This repository implements the Café Fausse web experience defined in the softwa
 .
 ├── backend/              # Flask application and database models
 ├── frontend/             # Vite + React client
-├── WebApplicationPresentation.pdf
-└── MSEE_Web_Application_and_Interface_Design_Cafe_Fausse_SRS.pdf
+├── resources
 ```
 
 > Original image assets referenced in the brief are not committed to this repository to comply with binary-file restrictions. The
