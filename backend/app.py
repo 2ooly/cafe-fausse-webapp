@@ -11,6 +11,29 @@ from .models import Customer, Reservation, NewsletterSubscription
 
 
 TABLE_COUNT = 30
+MAX_GUESTS_PER_TABLE = 10
+
+
+def _parse_time_slot(raw_time_slot: str) -> datetime:
+    """Parse a time slot value from the client."""
+    if not raw_time_slot:
+        raise ValueError("A reservation time is required.")
+
+    try:
+        return datetime.fromisoformat(raw_time_slot)
+    except ValueError as exc:  # pragma: no cover - defensive branch
+        raise ValueError("Please provide a valid date and time.") from exc
+
+
+def _calculate_availability(session, time_slot: datetime) -> dict[str, int]:
+    existing_bookings = session.execute(
+        select(func.count(Reservation.id)).where(Reservation.time_slot == time_slot)
+    ).scalar_one()
+
+    available_tables = max(TABLE_COUNT - existing_bookings, 0)
+    available_guests = available_tables * MAX_GUESTS_PER_TABLE
+
+    return {"tables": available_tables, "guests": available_guests}
 
 
 def create_app() -> Flask:
@@ -70,9 +93,9 @@ def create_app() -> Flask:
                 return jsonify({"message": error_message}), 400
 
         try:
-            time_slot = datetime.fromisoformat(payload['timeSlot'])
-        except ValueError:
-            return jsonify({"message": "Please provide a valid date and time."}), 400
+            time_slot = _parse_time_slot(payload['timeSlot'])
+        except ValueError as error:
+            return jsonify({"message": str(error)}), 400
 
         if time_slot < datetime.utcnow():
             return jsonify({"message": "Reservations must be scheduled for a future time."}), 400
@@ -86,18 +109,32 @@ def create_app() -> Flask:
         if guests <= 0:
             return jsonify({"message": "The number of guests must be at least one."}), 400
 
+        if guests > MAX_GUESTS_PER_TABLE:
+            return jsonify({"message": f"We can host up to {MAX_GUESTS_PER_TABLE} guests per reservation."}), 400
+
         email = payload['email'].strip()
         name = payload['name'].strip()
         phone = (payload.get('phone') or '').strip()
 
         session = SessionLocal()
         try:
-            existing_bookings = session.execute(
-                select(func.count(Reservation.id)).where(Reservation.time_slot == time_slot)
-            ).scalar_one()
+            availability = _calculate_availability(session, time_slot)
 
-            if existing_bookings >= TABLE_COUNT:
+            if availability["tables"] <= 0:
                 return jsonify({"message": "We are fully booked for that time."}), 409
+
+            if guests > availability["guests"]:
+                return (
+                    jsonify(
+                        {
+                            "message": (
+                                "We only have availability for "
+                                f"{availability['guests']} guests at that time."
+                            )
+                        }
+                    ),
+                    409,
+                )
 
             booked_tables = set(
                 session.scalars(select(Reservation.table_number).where(Reservation.time_slot == time_slot)).all()
@@ -126,13 +163,45 @@ def create_app() -> Flask:
             session.add(reservation)
             session.commit()
 
-            return jsonify({
-                "message": f"Your table is reserved! You will be seated at table {table_number}.",
-                "tableNumber": table_number
-            }), 201
+            return (
+                jsonify(
+                    {
+                        "message": f"Your table is reserved! You will be seated at table {table_number}.",
+                        "tableNumber": table_number,
+                        "reservationId": reservation.id,
+                        "timeSlot": reservation.time_slot.isoformat(),
+                        "guests": reservation.guests,
+                        "name": customer.name,
+                        "email": customer.email,
+                        "phone": customer.phone,
+                    }
+                ),
+                201,
+            )
         except IntegrityError:
             session.rollback()
             return jsonify({"message": "We are fully booked for that time."}), 409
+
+    @app.get('/api/reservations/availability')
+    def reservation_availability():
+        raw_time_slot = request.args.get('timeSlot', '')
+
+        try:
+            time_slot = _parse_time_slot(raw_time_slot)
+        except ValueError as error:
+            return jsonify({"message": str(error)}), 400
+
+        session = SessionLocal()
+
+        availability = _calculate_availability(session, time_slot)
+
+        return jsonify(
+            {
+                "availableGuests": availability["guests"],
+                "availableTables": availability["tables"],
+                "timeSlot": time_slot.isoformat(),
+            }
+        )
 
     return app
 
