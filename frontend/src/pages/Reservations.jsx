@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../lib/api';
 
 const createInitialForm = () => ({
   timeSlot: '',
@@ -43,7 +43,7 @@ export default function Reservations() {
     setIsSubmitting(true);
 
     try {
-      const { data } = await axios.post('/api/reservations', {
+      const { data } = await api.post('/api/reservations', {
         timeSlot: form.timeSlot,
         guests: requestedGuests,
         name: form.name,
@@ -71,7 +71,7 @@ export default function Reservations() {
 
     setAvailability((prev) => ({ ...prev, isLoading: true, message: '' }));
 
-    axios
+    api
       .get('/api/reservations/availability', {
         params: { timeSlot: form.timeSlot }
       })

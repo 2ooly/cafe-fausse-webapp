@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../lib/api';
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ export default function NewsletterSignup() {
 
     setIsSubmitting(true);
     try {
-      await axios.post('/api/newsletter', { email });
+      await api.post('/api/newsletter', { email });
       setStatus({ type: 'success', message: 'You are on the list! Expect refined experiences soon.' });
       setEmail('');
     } catch (error) {
