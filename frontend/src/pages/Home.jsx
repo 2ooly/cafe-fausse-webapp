@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import NewsletterSignup from '../components/NewsletterSignup.jsx';
 
-const heroImage = 'https://placehold.co/960x640?text=Caf%C3%A9%20Fausse';
+const heroImage = 'home-cafe-fausse.webp';
 
 export default function Home() {
   return (
