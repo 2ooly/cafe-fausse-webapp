@@ -4,11 +4,12 @@ from __future__ import annotations
 import os
 import sys
 
+
 import psycopg2
 from psycopg2 import OperationalError
 
 DEFAULT_DATABASE_URL = (
-    "postgresql+psycopg2://postgres:skdmKAdhdaLAK05@localhost:5432/cafe_fausse"
+    "postgresql+psycopg2://moshax:skdmKAdhdaLAK05@localhost:5432/cafe_fausse"
 )
 
 
