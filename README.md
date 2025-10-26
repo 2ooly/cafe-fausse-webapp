@@ -12,7 +12,6 @@ This repository implements the Café Fausse web experience defined in the softwa
 ├── resources
 ```
 
-> Original image assets referenced in the brief are not committed to this repository to comply with binary-file restrictions. The
 > React client instead sources descriptive placeholder imagery from [placehold.co](https://placehold.co/).
 
 ## Features
