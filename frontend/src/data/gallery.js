@@ -1,6 +1,3 @@
-const buildPlaceholder = (label) =>
-  `https://placehold.co/800x600?text=${encodeURIComponent(label)}`;
-
 export const galleryImages = [
 
   {
