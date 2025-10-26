@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 
 
-DATABASE_URL = os.environ.get('DATABASE_URL') or 'postgresql+psycopg2://postgres:moshax@localhost:5432/cafe_fausse'
+DATABASE_URL = os.environ.get('DATABASE_URL') or 'postgresql+psycopg2://postgres:skdmKAdhdaLAK05@localhost:5432/cafe_fausse'
 if DATABASE_URL.startswith('postgres://'):
     DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql+psycopg2://', 1)
 print(DATABASE_URL)
