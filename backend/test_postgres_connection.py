@@ -9,7 +9,7 @@ import psycopg2
 from psycopg2 import OperationalError
 
 DEFAULT_DATABASE_URL = (
-    "postgresql+psycopg2://moshax:skdmKAdhdaLAK05@localhost:5432/cafe_fausse"
+    "postgresql+psycopg2://moshax:skdmKAdhdaLAK05@127.0.0.1:5432/cafe_fausse"
 )
 
 
